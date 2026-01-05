@@ -1,0 +1,105 @@
+replicaCount: 3
+
+image:
+  backend:
+    repository: nexus/backend
+    tag: "1.0.0"
+    pullPolicy: IfNotPresent
+  frontend:
+    repository: nexus/frontend
+    tag: "1.0.0"
+    pullPolicy: IfNotPresent
+
+service:
+  type: LoadBalancer
+  backend:
+    port: 8000
+    targetPort: 8000
+  frontend:
+    port: 3000
+    targetPort: 3000
+
+ingress:
+  enabled: true
+  className: nginx
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+  hosts:
+    - host: nexus.trading
+      paths:
+        - path: /
+          pathType: Prefix
+          backend: frontend
+        - path: /api
+          pathType: Prefix
+          backend: backend
+  tls:
+    - secretName: nexus-tls
+      hosts:
+        - nexus.trading
+
+autoscaling:
+  enabled: true
+  minReplicas: 3
+  maxReplicas: 20
+  targetCPUUtilizationPercentage: 70
+  targetMemoryUtilizationPercentage: 80
+
+resources:
+  backend:
+    requests:
+      cpu: 1000m
+      memory: 2Gi
+    limits:
+      cpu: 4000m
+      memory: 8Gi
+  frontend:
+    requests:
+      cpu: 500m
+      memory: 512Mi
+    limits:
+      cpu: 2000m
+      memory: 2Gi
+
+postgresql:
+  enabled: true
+  auth:
+    username: nexus
+    password: nexuspassword
+    database: nexusdb
+  primary:
+    persistence:
+      size: 100Gi
+    resources:
+      requests:
+        cpu: 2000m
+        memory: 4Gi
+
+redis:
+  enabled: true
+  auth:
+    enabled: false
+  master:
+    persistence:
+      size: 20Gi
+    resources:
+      requests:
+        cpu: 500m
+        memory: 1Gi
+
+env:
+  - name: DATABASE_URL
+    value: "postgresql+asyncpg://nexus:nexuspassword@nexus-postgresql:5432/nexusdb"
+  - name: REDIS_URL
+    value: "redis://nexus-redis-master:6379/0"
+  - name: ENV
+    value: "production"
+
+secrets:
+  polygon_api_key: ""
+  alpaca_api_key: ""
+  alpaca_secret_key: ""
+  binance_api_key: ""
+  binance_secret: ""
+  ethereum_rpc: ""
+  solana_rpc: ""
