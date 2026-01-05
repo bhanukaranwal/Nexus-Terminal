@@ -1,0 +1,114 @@
+app:
+  name: "Nexus Trading Terminal"
+  version: "1.0.0"
+  environment: "production"
+  debug: false
+
+server:
+  host: "0.0.0.0"
+  port: 8000
+  workers: 4
+  reload: false
+
+database:
+  url: "${DATABASE_URL}"
+  pool_size: 20
+  max_overflow: 40
+  echo: false
+
+redis:
+  url: "${REDIS_URL}"
+  max_connections: 50
+
+brokers:
+  interactive_brokers:
+    enabled: true
+    host: "${IB_HOST}"
+    port: "${IB_PORT}"
+    client_id: 1
+    readonly: false
+  alpaca:
+    enabled: true
+    api_key: "${ALPACA_API_KEY}"
+    secret_key: "${ALPACA_SECRET_KEY}"
+    paper: false
+    base_url: "https://api.alpaca.markets"
+  binance:
+    enabled: true
+    api_key: "${BINANCE_API_KEY}"
+    secret: "${BINANCE_SECRET}"
+    testnet: false
+
+data_feeds:
+  polygon:
+    api_key: "${POLYGON_API_KEY}"
+    websocket: true
+  alpaca:
+    api_key: "${ALPACA_API_KEY}"
+    secret_key: "${ALPACA_SECRET_KEY}"
+  binance:
+    enabled: true
+
+blockchain:
+  ethereum:
+    rpc_url: "${ETHEREUM_RPC}"
+    chain_id: 1
+    gas_limit: 300000
+  solana:
+    rpc_url: "${SOLANA_RPC}"
+    commitment: "confirmed"
+  web3_storage:
+    enabled: false
+
+ai:
+  models:
+    llm:
+      provider: "openai"
+      model: "gpt-4-turbo-preview"
+      api_key: "${OPENAI_API_KEY}"
+    embedding:
+      provider: "openai"
+      model: "text-embedding-3-large"
+  agents:
+    max_concurrent: 10
+    timeout: 300
+  quantum_optimization:
+    enabled: true
+    backend: "jax"
+
+features:
+  ar_vr:
+    enabled: true
+    webxr_polyfill: true
+  defi:
+    enabled: true
+    protocols: ["uniswap", "aave", "compound"]
+  tokenization:
+    enabled: true
+    standards: ["ERC20", "ERC721"]
+  geopolitical_sentiment:
+    enabled: true
+    sources: ["news_api", "twitter", "reddit"]
+
+security:
+  jwt_secret: "${JWT_SECRET}"
+  jwt_algorithm: "HS256"
+  access_token_expire: 3600
+  refresh_token_expire: 604800
+  cors_origins:
+    - "http://localhost:3000"
+    - "https://nexus.trading"
+
+monitoring:
+  prometheus:
+    enabled: true
+    port: 9090
+  grafana:
+    enabled: true
+    port: 3001
+  log_level: "INFO"
+
+rate_limiting:
+  enabled: true
+  requests_per_minute: 1000
+  burst: 2000
