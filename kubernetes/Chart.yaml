@@ -1,0 +1,17 @@
+apiVersion: v2
+name: nexus-terminal
+description: The Ultimate Futuristic Trading Terminal
+type: application
+version: 1.0.0
+appVersion: "1.0.0"
+keywords:
+  - trading
+  - fintech
+  - ai
+  - blockchain
+  - defi
+maintainers:
+  - name: Nexus Team
+    email: team@nexus.trading
+sources:
+  - https://github.com/yourusername/nexus-terminal
